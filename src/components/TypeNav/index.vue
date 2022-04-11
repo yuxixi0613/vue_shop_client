@@ -1,57 +1,78 @@
 <template>
   <div class="type-nav">
     <div class="container">
-      <h2 class="all">全部商品分类</h2>
-      <nav class="nav">
-        <a href="###">服装城</a>
-        <a href="###">美妆馆</a>
-        <a href="###">尚品汇超市</a>
-        <a href="###">全球购</a>
-        <a href="###">闪购</a>
-        <a href="###">团购</a>
-        <a href="###">有趣</a>
-        <a href="###">秒杀</a>
-      </nav>
-      <div class="sort">
-        <div class="all-sort-list2">
-          <div
-            class="item"
-            v-for="(c1, index) in categoryList"
-            :key="c1.categoryId"
-          >
-            <h3>
-              <a href="">{{ c1.categoryName }}</a>
-            </h3>
-            <div class="item-list clearfix">
-              <div class="subitem">
-                <dl
-                  class="fore"
-                  v-for="(c2, index) in c1.categoryChild"
-                  :key="c2.categoryId"
+      <div @mouseleave="moveOutDIv" @mouseenter="moveInDiv">
+        <h2 class="all">全部商品分类</h2>
+        <div class="sort" v-show="isShow">
+          <div class="all-sort-list2" @click="toSearch">
+            <div
+              class="item"
+              :class="{ item_on: currentIndex === index }"
+              v-for="(c1, index) in categoryList"
+              :key="c1.categoryId"
+              @mouseenter="moveInItem(index)"
+            >
+              <h3>
+                <a
+                  href="javascript:;"
+                  :data-category1Id="c1.categoryId"
+                  :data-categoryName="c1.categoryName"
+                  >{{ c1.categoryName }}</a
                 >
-                  <dt>
-                    <a href="">{{ c2.categoryName }}</a>
-                  </dt>
-                  <dd>
-                    <em
-                      v-for="(c3, index) in c2.categoryChild"
-                      :key="c3.categoryId"
-                    >
-                      <a href="">{{ c3.categoryName }}</a>
-                    </em>
-                  </dd>
-                </dl>
+              </h3>
+              <div class="item-list clearfix">
+                <div class="subitem">
+                  <dl
+                    class="fore"
+                    v-for="(c2, index) in c1.categoryChild"
+                    :key="c2.categoryId"
+                  >
+                    <dt>
+                      <a
+                        href="javascript:;"
+                        :data-category2Id="c2.categoryId"
+                        :data-categoryName="c2.categoryName"
+                        >{{ c2.categoryName }}</a
+                      >
+                    </dt>
+                    <dd>
+                      <em
+                        v-for="(c3, index) in c2.categoryChild"
+                        :key="c3.categoryId"
+                      >
+                        <a
+                          href="javascript:;"
+                          :data-category3Id="c3.categoryId"
+                          :data-categoryName="c3.categoryName"
+                          >{{ c3.categoryName }}</a
+                        >
+                      </em>
+                    </dd>
+                  </dl>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+      <nav class="nav">
+        <a href="javascript:;">服装城</a>
+        <a href="javascript:;">美妆馆</a>
+        <a href="javascript:;">尚品汇超市</a>
+        <a href="javascript:;">全球购</a>
+        <a href="javascript:;">闪购</a>
+        <a href="javascript:;">团购</a>
+        <a href="javascript:;">有趣</a>
+        <a href="javascript:;">秒杀</a>
+      </nav>
     </div>
   </div>
 </template>
 
 <script>
 import { mapState } from "vuex";
+// import _ from "lodash"; //完整引入
+import throttle from "lodash/throttle"; //按需引入
 export default {
   name: "TypeNav",
   //name的作用：
@@ -59,18 +80,101 @@ export default {
   //2.全局注册
   //3.keepAlive
 
+  data() {
+    return {
+      currentIndex: -1,
+      isShow: true,
+    };
+  },
+
   //vuex中取数据在computed中取
   computed: {
     ...mapState({
       categoryList: (state) => state.home.categoryList,
     }),
   },
-  mounted() {
-    this.getCategoryList();
+
+  beforeMount() {
+    // console.log(this.$route.path)
+    if (this.$route.path !== "/home") {
+      this.isShow = false;
+    }
   },
+
+  // mounted() {
+  //   this.getCategoryList();
+  // },
+
   methods: {
-    getCategoryList() {
-      this.$store.dispatch("getCategoryList");
+    // getCategoryList() {
+    //   this.$store.dispatch("getCategoryList");
+    // },
+
+    //移入每个一级分类的事件函数
+    // moveInItem(index) {
+    //   this.currentIndex = index;
+    // },
+
+    //节流处理后的移入事件函数
+    moveInItem: throttle(
+      function (index) {
+        // console.log(index);
+        this.currentIndex = index;
+      },
+      50,
+      { trailing: false }
+    ),
+
+    toSearch(event) {
+      let target = event.target;
+
+      //盲取
+      let dataset = target.dataset;
+
+      // console.log(dataset);
+
+      //盲解构
+      let { category1id, category2id, category3id, categoryname } = dataset;
+
+      if (categoryname) {
+        let location = {
+          name: "search",
+        };
+
+        let query = {
+          categoryName: categoryname,
+        };
+
+        if (category1id) {
+          query.category1Id = category1id;
+        } else if (category2id) {
+          query.category2Id = category2id;
+        } else {
+          query.category3Id = category3id;
+        }
+        location.query = query;
+        // location = { ...location, ...query };
+        // console.log(location, "1");
+
+        //跳转之前看之前有没有带params参数，有的话带上
+        location.params = this.$route.params
+        
+        this.$router.push(location);
+      }
+    },
+
+    // 鼠标移入我们自己造的div，让三级分类显示，其实也得考虑home和search两遍
+    // 只是home本身就是显示着呢，search里面是隐藏的，我们就考虑如何让search当中的显示就可以
+    moveInDiv() {
+      this.isShow = true;
+    },
+
+    // 鼠标移出我们自己造的div，让三级分类在home页面继续留着，在search页面要隐藏
+    moveOutDIv() {
+      this.currentIndex = -1;
+      if (this.$route.path !== "/home") {
+        this.isShow = false;
+      }
     },
   },
 };
@@ -186,7 +290,7 @@ export default {
             }
           }
 
-          &:hover {
+          &.item_on {
             background-color: #bfa;
             .item-list {
               display: block;
