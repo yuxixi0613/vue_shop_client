@@ -3,10 +3,7 @@ import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 
-import Home from '@/pages/Home'
-import Login from '@/pages/Login'
-import Register from '@/pages/Register'
-import Search from '@/pages/Search'
+import routes from './routes'
 
 
 // 1、保存原来的push方法，以备后期使用
@@ -26,33 +23,5 @@ VueRouter.prototype.push = function (location, resolved, rejected) {
 export default new VueRouter({
     base: '/',
     mode: 'history',
-    routes: [
-        {
-            path: '/home',
-            component: Home
-        },
-        {
-            path: '/login',
-            component: Login,
-            meta: {
-                isHidden: true
-            }
-        },
-        {
-            path: '/register',
-            component: Register,
-            meta: {
-                isHidden: true
-            }
-        },
-        {
-            name: 'search',
-            path: '/search',
-            component: Search
-        },
-        {
-            path: '/',
-            redirect: '/home'
-        }
-    ]
+    routes
 });

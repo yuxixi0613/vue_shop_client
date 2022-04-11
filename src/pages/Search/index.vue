@@ -1,5 +1,12 @@
 <template>
-  <div>Search</div>
+  <div>
+    Search
+    <br>
+    <!-- 显示路由传递的参数 -->
+    params: {{$route.params.keyword}}
+    <br>
+    query:{{$route.query.keyword1}}
+  </div>
 </template>
 
 <script>

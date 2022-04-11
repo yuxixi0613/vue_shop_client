@@ -1,19 +1,21 @@
 <template>
   <div id="app">
-    <PageHeader></PageHeader>
+    <Header></Header>
     <router-view></router-view>
-    <PageFooter></PageFooter>
+    <!-- 第一种方案可以根据路径去判断login与register不显示footer -->
+    <!-- <Footer v-show="$route.path==='/home'|| $route.path==='/search'"></Footer> -->
+    <Footer v-show="!$route.meta.isHidden"></Footer>
   </div>
 </template>
 
 <script>
-import PageHeader from "@/components/PageHeader";
-import PageFooter from "@/components/PageFooter";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 export default {
   name: "App",
   components: {
-    PageHeader,
-    PageFooter,
+    Header,
+    Footer,
   },
 };
 </script>

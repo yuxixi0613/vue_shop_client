@@ -106,7 +106,7 @@
 
 <script>
 export default {
-  name: "PageHeader",
+  name: "Footer",
 };
 </script>
 

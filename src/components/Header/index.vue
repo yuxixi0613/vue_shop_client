@@ -57,7 +57,7 @@
 
 <script>
 export default {
-  name: "PageHeader",
+  name: "Header",
   data() {
     return {
       keyWord: "",
@@ -68,19 +68,19 @@ export default {
     toSearch() {
       //跳转路由携带参数的两种方式：字符串、对象
       // 字符串写法
-      this.$router.push(
-        `/search/${this.keyWord}?keyWord1=${this.keyWord.toUpperCase()}`
-      );
+      // this.$router.push(
+      //   `/search/${this.keyWord}?keyWord1=${this.keyWord.toUpperCase()}`
+      // );
       // 对象写法
-      // this.$router.push({
-      //   name: "search",
-      //   params: {
-      //     keyWord: this.keyWord,
-      //   },
-      //   query: {
-      //     keyWord1: this.keyWord.toUpperCase(),
-      //   },
-      // });
+      this.$router.push({
+        name: "search",
+        params: {
+          keyWord: this.keyWord,
+        },
+        query: {
+          keyWord1: this.keyWord.toUpperCase(),
+        },
+      });
     },
   },
 };
