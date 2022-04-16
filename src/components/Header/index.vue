@@ -40,7 +40,7 @@
             type="text"
             id="autocomplete"
             class="input-error input-xxlarge"
-            v-model="keyWord"
+            v-model="keyword"
           />
           <button
             class="sui-btn btn-xlarge btn-danger"
@@ -60,7 +60,7 @@ export default {
   name: "Header",
   data() {
     return {
-      keyWord: "",
+      keyword: "",
     };
   },
   methods: {
@@ -69,18 +69,23 @@ export default {
       //跳转路由携带参数的两种方式：字符串、对象
       // 字符串写法
       // this.$router.push(
-      //   `/search/${this.keyWord}?keyWord1=${this.keyWord.toUpperCase()}`
+      //   `/search/${this.keyword}?keyword1=${this.keyword.toUpperCase()}`
       // );
       // 对象写法
       let location = {
         name: "search",
         params: {
-          keyWord: this.keyWord,
+          keyword: this.keyword,
         },
       };
       location.query = this.$route.query;
       this.$router.push(location);
     },
+  },
+  mounted() {
+    this.$bus.$on("removeKeyword", () => {
+      this.keyword = "";
+    });
   },
 };
 </script>
