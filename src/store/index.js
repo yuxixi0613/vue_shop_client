@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 import home from './modules/home'
 import user from './modules/user'
 import search from './modules/search'
+import detail from './modules/detail'
 Vue.use(Vuex)
 
 const state = {}
@@ -17,9 +18,10 @@ export default new Vuex.Store({
     actions,
     getters,
     //合并小store给大store
-    modules:{
+    modules: {
         home,
         user,
-        search
+        search,
+        detail,
     }
 })

@@ -36,7 +36,14 @@ export const reqSearchInfo = (searchParams) => {
     return request({
         url: '/list',
         method: "post",
-        data:searchParams
+        data: searchParams
     })  //返回一个promise
 }
 // reqSearchInfo({})
+
+export const reqGoodsDetailInfo = (skuId) => {
+    return request({
+        url: `/item/${skuId}`,
+        method:'get',
+    })
+}

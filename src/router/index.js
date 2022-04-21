@@ -23,5 +23,9 @@ VueRouter.prototype.push = function (location, resolved, rejected) {
 export default new VueRouter({
     base: '/',
     mode: 'history',
-    routes
+    routes,
+    // 下面这个函数以后是配置路由的固定项
+    scrollBehavior (to, from, savedPosition) {
+        return { x: 0, y: 0 }
+    }
 });

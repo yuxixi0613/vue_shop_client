@@ -79,7 +79,10 @@
               <li class="yui3-u-1-5" v-for="goods in goodsList" :key="goods.id">
                 <div class="list-wrap">
                   <div class="p-img">
-                    <a href="item.html"><img :src="goods.defaultImg" /></a>
+                    <!-- <a href="item.html"><img :src="goods.defaultImg" /></a> -->
+                    <router-link :to="'/detail/' + goods.id">
+                      <img :src="goods.defaultImg" />
+                    </router-link>
                   </div>
                   <div class="price">
                     <strong>
@@ -88,7 +91,10 @@
                     </strong>
                   </div>
                   <div class="attr">
-                    <a href="item.html">{{ goods.title }} </a>
+                    <!-- <a href="item.html">{{ goods.title }} </a> -->
+                    <router-link :to="'/detail/' + goods.id">
+                      {{ goods.title }}
+                    </router-link>
                   </div>
                   <div class="commit">
                     <i class="command">已有<span>2000</span>人评价</i>
@@ -110,9 +116,10 @@
           </div>
           <div class="fr page">
             <Pagination
-              :pageNo="searchParams.pageNo"
+              @changePageNo="changePageNo"
+              :currentPage="searchParams.pageNo"
+              :total="total"
               :pageSize="searchParams.pageSize"
-              :total="searchParams.total"
               :continueNo="5"
             ></Pagination>
           </div>
@@ -186,12 +193,14 @@ export default {
 
     //删除面包屑当中的**三级分类名称**搜索条件 categoryName
     removeCategoryName() {
-      this.searchParams.categoryName = undefined;
-      this.searchParams.category1Id = undefined;
-      this.searchParams.category2Id = undefined;
-      this.searchParams.category3Id = undefined;
+      // this.searchParams.categoryName = undefined;
+      // this.searchParams.category1Id = undefined;
+      // this.searchParams.category2Id = undefined;
+      // this.searchParams.category3Id = undefined;
 
       // this.getSearchInfo();//删除选中的搜索条件后路径不变，需要手动去push跳转到去除对应参数的新路由
+
+      // this.searchParams.pageNo = 1;
 
       this.$router.push({
         name: "search",
@@ -201,7 +210,10 @@ export default {
 
     //删除面包屑当中的**关键字***搜索条件 keyword
     removeKeyword() {
-      this.searchParams.keyword = undefined;
+      // this.searchParams.keyword = undefined;
+
+      // this.searchParams.pageNo = 1;
+
       this.$router.push({
         name: "search",
         query: this.$route.query,
@@ -212,6 +224,7 @@ export default {
     //点击删除面包屑当中的**品牌条件**，重新发请求
     removeTrademark() {
       this.searchParams.trademark = undefined;
+      this.searchParams.pageNo = 1;
       this.getSearchInfo();
     },
 
@@ -219,12 +232,15 @@ export default {
     removeProp(index) {
       // console.log("123");
       this.searchParams.props.splice(index, 1);
+      this.searchParams.pageNo = 1;
       this.getSearchInfo();
     },
 
     //点击子组件的品牌，请求搜索
     searchForTrademark(trademark) {
       this.searchParams.trademark = `${trademark.tmId}:${trademark.tmName}`;
+
+      this.searchParams.pageNo = 1;
       this.getSearchInfo();
     },
     //点击子组件的属性，请求搜索
@@ -236,11 +252,11 @@ export default {
       if (isRepeat) return;
 
       this.searchParams.props.push(prop);
-
+      this.searchParams.pageNo = 1;
       this.getSearchInfo();
     },
 
-    //改变
+    //点击综合和价格进行排序
     changeOrder(orderFlag) {
       let originFlag = this.searchParams.order.split(":")[0];
       let originType = this.searchParams.order.split(":")[1];
@@ -251,12 +267,19 @@ export default {
           originType === "asc" ? "desc" : "asc"
         }`;
       }
+      this.searchParams.pageNo = 1;
+      this.getSearchInfo();
+    },
+
+    //点击分页器的按钮，切换最新页码重新发送请求获取最新页码的数据
+    changePageNo(page) {
+      this.searchParams.pageNo = page;
       this.getSearchInfo();
     },
   },
   computed: {
     ...mapGetters(["goodsList"]),
-    ...mapState({total:state=>state.search.searchInfo.total}),
+    ...mapState({ total: (state) => state.search.searchInfo.total }),
     orderFlag() {
       return this.searchParams.order.split(":")[0];
     },
@@ -289,6 +312,7 @@ export default {
 
         this.searchParams = searchParams;
 
+        this.searchParams.pageNo = 1;
         //赋值之后，重新dispatch
         this.getSearchInfo();
       },
